@@ -19,7 +19,6 @@ function findEmptyFolders($sftp, $directory)
         if ($file != '.' && $file != '..') {
             // Construir la ruta completa del archivo o carpeta
             $path = $directory . '/' . $file;
-            //echo $path . "\n";
             // Verificar si es una carpeta
             if ($sftp->is_dir($path)) {
                 // Recursivamente buscar carpetas vacías
@@ -29,16 +28,13 @@ function findEmptyFolders($sftp, $directory)
                 unset($informacionDirectorio['..']);
                 foreach ($informacionDirectorio as $nombre => $detalles) {
                     $elemento = [
-                        'nombre' => $nombre,
-                        'tipo' => ($detalles['type'] === 2 ? 'Directorio' : 'Archivo'),
-                        'tamaño' => ($detalles['type'] === 2 ? round($detalles['size']) : round($detalles['size'] / (1024 * 1024), 2)),
+                        'carVacia' => $path . "/" . $nombre
                     ];
-                    $tipo = $elemento['tipo'];
-                    $tamano = $elemento['tamaño'];
+                    $tipo = ($detalles['type'] === 2 ? 'Directorio' : 'Archivo');
+                    $tamano = ($detalles['type'] === 2 ? round($detalles['size']) : round($detalles['size'] / (1024 * 1024), 2));
                     if ($tipo == 'Directorio' && $tamano <= 6) {
-                        array_push($emptyFolders, $path . "/" . $elemento['nombre']);
+                        $emptyFolders[] = $elemento;
                     }
-
                 }
             }
         }
@@ -65,31 +61,49 @@ try {
     foreach ($result as $item) {
         array_push($listCarreras, $item['nomCar']);
     }
+
 } catch (\Throwable $th) {
-    echo json_encode("Error" . $th);
+    $response = array("error" => "Error" . $th);
+    echo json_encode($response);
+    exit;
 }
 
 // Configurar la conexión SFTP
 if (sizeof($listCarreras) > 0 ) {
     $sftp = new SFTP($servidor, $puerto);
     if (!$sftp->login($user, $pass)) {
-        die('No se pudo autenticar en el servidor SFTP');
+        $response = array("error" => "No se pudo autenticar en el servidor SFTP");
+        echo json_encode($response);
+        exit;
     }
+
+    $emptyFolders = array();
 
     try {
-        $i=0;
-        while( $i<sizeof($listCarreras)){
-            $rootDirectory = '/UTA/FISEI/CARRERAS/'.mb_strtoupper($listCarreras[$i]);
-            $emptyFolders = findEmptyFolders($sftp, $rootDirectory);
-            $i++;
+        foreach ($listCarreras as $carrera) {
+            $rootDirectory = '/UTA/FISEI/CARRERAS/' . mb_strtoupper($carrera);
+            $emptyFolders = array_merge($emptyFolders, findEmptyFolders($sftp, $rootDirectory));
         }
-        echo json_encode($emptyFolders, JSON_UNESCAPED_UNICODE);
+
+        // Extraer los nombres de las carpetas vacías y ordenarlos
+        $names = array_map(function($folder) {
+            return $folder['carVacia'];
+        }, $emptyFolders);
+
+        sort($names);
+
+        // Construir el array ordenado de objetos
+        $sortedFolders = array_map(function($name) {
+            return array("carVacia" => $name);
+        }, $names);
+
+        echo json_encode($sortedFolders);
     } catch (\Throwable $th) {
-        echo json_encode("Error " . $th);
+        $response = array("error" => "Error " . $th);
+        echo json_encode($response);
     }
 } else {
-    echo json_encode("Necesitass un nombre de carrera");
+    $response = array("error" => "Necesitas un nombre de carrera");
+    echo json_encode($response);
 }
-
-
 ?>

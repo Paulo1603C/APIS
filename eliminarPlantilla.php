@@ -6,14 +6,13 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require('conexion.php');
 
-$id = $_POST['id'];
+$idPlantilla = $_POST['IdPlantilla'];
 $eliItems = false;
-$eliEst = false;
 
-// Para eliminar un usuario primero debemos eliminar las referencias en otras tablas 
-$sqlEliminarItemsPlan = "DELETE FROM items_Plantillas WHERE IdPlanPer = :id";
+//eliminar de tablas referenciales 
+$sqlEliminarItemsPlan = "DELETE FROM items_directorios where idPlanPer =:idPlan";
 $sqlEliminarItemsPlan = $connect->prepare($sqlEliminarItemsPlan);
-$sqlEliminarItemsPlan->bindParam(':id', $id, PDO::PARAM_INT);
+$sqlEliminarItemsPlan->bindParam(':idPlan', $idPlantilla, PDO::PARAM_INT);
 
 try {
     $sqlEliminarItemsPlan->execute();
@@ -25,38 +24,24 @@ try {
     echo json_encode("Error en la consulta de carreras_secretarias: " . $e->getMessage());
 }
 
-$sqlEliminarPermisos = "DELETE FROM estudiantes WHERE IdPlanPer = :id";
-$sqlEliminarPermisos = $connect->prepare($sqlEliminarPermisos);
-$sqlEliminarPermisos->bindParam(':id', $id, PDO::PARAM_INT);
 
-try {
-    $sqlEliminarPermisos->execute();
-    if ($sqlEliminarPermisos->rowCount() > 0) {
-        $eliEst = true;
-        //echo "Eliminación de usuarios_permisos exitosa<br>";
-    }
-} catch (PDOException $e) {
-    echo json_encode("Error en la consulta de usuarios_permisos: " . $e->getMessage());
-}
-
-if ($eliItems == true || $eliEst == true) {
-    $sqlEliminar = "DELETE FROM usuarios WHERE IdUser = :id";
-    $sqlEliminar = $connect->prepare($sqlEliminar);
-    $sqlEliminar->bindParam(':id', $id, PDO::PARAM_INT);
+if ( $eliItems == true ) {
+    $sqlEliminarPlan = "DELETE FROM plantillas_directorios where idPlan =:idPlan";
+    $sqlEliminarPlan = $connect->prepare($sqlEliminarPlan);
+    $sqlEliminarPlan->bindParam(':idPlan', $idPlantilla, PDO::PARAM_INT);
 
     try {
-        $sqlEliminar->execute();
-        if ($sqlEliminar->rowCount() > 0) {
+        $sqlEliminarPlan->execute();
+        if ($sqlEliminarPlan->rowCount() > 0) {
             echo json_encode(["message" => "Eliminado"]);
         } else {
             echo json_encode(["message" => "No Eliminado"]);
         }
     } catch (PDOException $e) {
-        echo json_encode("Error en la consulta de usuarios: " . $e->getMessage());
+        echo json_encode("Error en la consulta de Plantilla: " . $e->getMessage());
     }
 } else {
-    echo json_encode(["message" => "Error al eliminar el Usuario"]);
+    echo json_encode(["message" => "Error al eliminar la Plantilla"]);
 }
-
     $connect = null;
 ?>
