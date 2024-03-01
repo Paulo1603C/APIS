@@ -10,8 +10,8 @@ $idPlan = isset($_POST['IdPlan']) ? $_POST['IdPlan'] : null;
 if ($idPlan != null) {
     $list = array();
     $sqlSelect = " SELECT ip.NomItem 
-                FROM `ITEMS_DIRECTORIOS` AS id 
-                JOIN `ITEMS_PLANTILLAS` AS ip ON id.IdSubDirPer = ip.IdItem
+                FROM `items_directorios` AS id 
+                JOIN `items_plantillas` AS ip ON id.IdSubDirPer = ip.IdItem
                 WHERE id.IdPlanPer = :idPlan ";
     $sqlSelect = $connect->prepare($sqlSelect);
     $sqlSelect->bindParam(':idPlan',$idPlan, PDO::PARAM_INT);

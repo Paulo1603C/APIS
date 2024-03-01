@@ -11,16 +11,16 @@ $idPlantilla = isset($_POST['idPlantilla']) ? $_POST['idPlantilla'] : 0;
 
 if ($idPlantilla == 0) {
     $sqlSelect = "SELECT PD.IdPlan, PD.NomPlan, GROUP_CONCAT(ISD.IdItem) AS IdItem,GROUP_CONCAT(ISD.NomItem) AS Items
-    FROM PLANTILLAS_DIRECTORIOS PD
-    JOIN ITEMS_DIRECTORIOS IDIR ON PD.IdPlan = IDIR.IdPlanPer
-    JOIN ITEMS_PLANTILLAS ISD ON IDIR.IdSubDirPer = ISD.IdItem
+    FROM plantillas_directorios PD
+    JOIN items_directorios IDIR ON PD.IdPlan = IDIR.IdPlanPer
+    JOIN items_plantillas ISD ON IDIR.IdSubDirPer = ISD.IdItem
     GROUP BY PD.IdPlan
     ORDER BY PD.NomPlan";
 } else {
-    $sqlSelect = "SELECT PD.IdPlan, PD.NomPlan, GROUP_CONCAT(ISD.IdItem) AS IdItem,GROUP_CONCAT(ISD.NomItem) AS Items
-    FROM PLANTILLAS_DIRECTORIOS PD
-    JOIN ITEMS_DIRECTORIOS IDIR ON PD.IdPlan = IDIR.IdPlanPer
-    JOIN ITEMS_PLANTILLAS ISD ON IDIR.IdSubDirPer = ISD.IdItem
+    $sqlSelect = "SELECT PD.IdPlan, PD.NomPlan, GROUP_CONCAT(ISD.IdItem) AS IdItem,GROUP_CONCAT(ISD.NomItem) AS items
+    FROM plantillas_directorios PD
+    JOIN items_directorios IDIR ON PD.IdPlan = IDIR.IdPlanPer
+    JOIN items_plantillas ISD ON IDIR.IdSubDirPer = ISD.IdItem
     WHERE PD.IdPlan = :idPlantilla
     GROUP BY PD.IdPlan;
     ORDER BY PD.NomPlan";

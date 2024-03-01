@@ -9,9 +9,9 @@ require ('conexion.php');
 $idUser=$_POST['IdUser'];
 $listCarreras = array();
 $selectCarreras = "SELECT DISTINCT c.idCar, c.nomCar 
-            FROM Carreras as c
-            JOIN Carreras_Secretarias as cs ON cs.IdCarPer = c.IdCar
-            JOIN Usuarios as u ON u.IdUser = cs.IdUserPer
+            FROM carreras as c
+            JOIN carreras_Secretarias as cs ON cs.IdCarPer = c.IdCar
+            JOIN usuarios as u ON u.IdUser = cs.IdUserPer
             where IdUser = :IdUser
             ORDER BY c.nomCar";
 $selectCarreras = $connect->prepare($selectCarreras);

@@ -9,7 +9,7 @@ require('conexion.php');
 $idEst = $_POST['idEst'];
 
 // Para eliminar un usuario primero debemos eliminar las referencias en otras tablas 
-$sqlEliminarEstDirectorio = "DELETE FROM ARCHIVOS_ESTUDIANTES WHERE IdEstPer = :id";
+$sqlEliminarEstDirectorio = "DELETE FROM archivos_estudiantes WHERE IdEstPer = :id";
 $sqlEliminarEstDirectorio = $connect->prepare($sqlEliminarEstDirectorio);
 $sqlEliminarEstDirectorio->bindParam(':id', $idEst, PDO::PARAM_INT);
 

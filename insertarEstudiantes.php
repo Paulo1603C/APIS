@@ -13,7 +13,7 @@ $nomModificador = $_POST['NomModificador'];
 $idCarPer= $_POST['IdCarPer'];
 $idPlanPer= $_POST['IdPlanPer'];
 
-$sqlInsertEst="INSERT INTO ESTUDIANTES (NomEst, ApeEst, CedEst, Fecha, Nom_Modificador, IdCarPer, IdPlanPer) 
+$sqlInsertEst="INSERT INTO estudiantes (NomEst, ApeEst, CedEst, Fecha, Nom_Modificador, IdCarPer, IdPlanPer) 
                         VALUES (:nomEst, :apeEst, :cedEst, :fecha, :nomModificador, :idCarPer, :idPlanPer)";
 $sqlInsertEst = $connect->prepare($sqlInsertEst);
 $sqlInsertEst->bindParam(':nomEst',$nomEst, PDO::PARAM_STR);
