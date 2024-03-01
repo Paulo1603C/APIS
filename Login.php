@@ -1,6 +1,6 @@
 <?php
 
-header("Access-Control-Allow-Origin: http://172.21.123.13:8080"); // Permite solicitudes desde tu aplicación Vue.js
+header("Access-Control-Allow-Origin: *"); // Permite solicitudes desde tu aplicación Vue.js
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // Define los métodos HTTP permitidos
 header("Access-Control-Allow-Headers: Content-Type"); // Define los encabezados permitidos
 
