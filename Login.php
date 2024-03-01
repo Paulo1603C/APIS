@@ -20,7 +20,7 @@ try {
         $result = $sqlSelect->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($result); 
     }else{
-        echo json_encode(['Message' => 'No existen credenciales para la consulta']);
+        echo json_encode(['Message' => 'No existen credenciales para la consulta de login']);
     }
 } catch (\Throwable $th) {
     echo json_encode('Error en la consulta'. $th->getMessage());
