@@ -13,9 +13,9 @@ if ($IdCar != null || $IdUser != null) {
     $list = array();
     $sqlSelect = "SELECT e.IdEst, e.NomEst, e.ApeEst, e.CedEst, e.Fecha, c.IdCar, c.NomCar, u.NomUser, e.Nom_Modificador, e.IdPlanPer
                 FROM estudiantes as e
-                JOIN Carreras as c ON e.IdCarPer = c.IdCar
-                JOIN Carreras_Secretarias as cs ON c.IdCar = cs.IdCarPer
-                JOIN Usuarios as u ON cs.IdUserPer = u.IdUser
+                JOIN carreras as c ON e.IdCarPer = c.IdCar
+                JOIN carreras_secretarias as cs ON c.IdCar = cs.IdCarPer
+                JOIN usuarios as u ON cs.IdUserPer = u.IdUser
                 WHERE c.IdCar = :idCar
                 AND u.IdUser = :idUser
                 ORDER BY e.NomEst";

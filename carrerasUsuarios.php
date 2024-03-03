@@ -10,7 +10,7 @@ $idUser=$_POST['IdUser'];
 $listCarreras = array();
 $selectCarreras = "SELECT DISTINCT c.idCar, c.nomCar 
             FROM carreras as c
-            JOIN carreras_Secretarias as cs ON cs.IdCarPer = c.IdCar
+            JOIN carreras_secretarias as cs ON cs.IdCarPer = c.IdCar
             JOIN usuarios as u ON u.IdUser = cs.IdUserPer
             where IdUser = :IdUser
             ORDER BY c.nomCar";
