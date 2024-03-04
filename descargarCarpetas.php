@@ -51,7 +51,7 @@ try {
                 new RecursiveDirectoryIterator($tempDir),
                 RecursiveIteratorIterator::LEAVES_ONLY
             );
-
+            
             foreach ($files as $name => $file) {
                 if (!$file->isDir()) {
                     $filePath     = $file->getRealPath();
@@ -60,7 +60,6 @@ try {
                     $zip->addFile($filePath, $relativePath);
                 }
             }
-
             $zip->close();
         } else {
             throw new Exception('No se pudo crear el archivo ZIP');
