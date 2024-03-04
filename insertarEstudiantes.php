@@ -35,7 +35,7 @@ try {
     }
     echo $sqlInsertEst->rowCount();
 } catch (\Throwable $th) {
-    echo json_encode("Error en la consulta: " . $e->getMessage());
+    echo json_encode("Error en la consulta: " . $th->getMessage());
 }
 
 ?>
