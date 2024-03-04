@@ -27,7 +27,7 @@ if ($idUser != null || $nomItem != null) {
                     GROUP_CONCAT( p.IdPer) as IdPer , GROUP_CONCAT( p.NomPer) as NomPer
                     from usuarios_permisos as up JOIN usuarios as u ON up.IdUserPer = u.IdUser
                     JOIN permisos as p ON up.IdPerPer = p.IdPer
-                    JOIN items_subDirectorios as isd ON up.IdItemSubPer = isd.IdItem
+                    JOIN items_subdirectorios as isd ON up.IdItemSubPer = isd.IdItem
                     WHERE u.IdUser = :idUser
                     AND isd.NomItem = :nomItem; ";
     }
