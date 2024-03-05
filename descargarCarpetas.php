@@ -8,6 +8,16 @@ require_once('Servidor.php');
 require_once('vendor/autoload.php');
 use phpseclib3\Net\SFTP;
 
+function safeUrl($url) {
+    // Verificar si la URL ya tiene el protocolo HTTPS
+    if (strpos($url, 'https://') === 0) {
+        return $url; // La URL ya es segura, retornarla sin cambios
+    } else {
+        // La URL no tiene HTTPS, reemplazar HTTP por HTTPS
+        return str_replace('http://', 'https://', $url);
+    }
+}
+
 function downloadFolder($sftp, $folderPath, $localPath) {
     $files = $sftp->nlist($folderPath);
 
@@ -68,7 +78,7 @@ try {
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-        readfile($zipFileName);
+        readfile(safeUrl($zipFileName)); // Utilizar safeUrl para generar la URL segura
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
         removeDir($tempDir);
