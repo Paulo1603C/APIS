@@ -8,7 +8,8 @@ require_once('Servidor.php');
 require_once('vendor/autoload.php');
 use phpseclib3\Net\SFTP;
 
-function safeUrl($url) {
+function safeUrl($url)
+{
     // Verificar si la URL ya tiene el protocolo HTTPS
     if (strpos($url, 'https://') === 0) {
         return $url; // La URL ya es segura, retornarla sin cambios
@@ -18,7 +19,8 @@ function safeUrl($url) {
     }
 }
 
-function downloadFolder($sftp, $folderPath, $localPath) {
+function downloadFolder($sftp, $folderPath, $localPath)
+{
     $files = $sftp->nlist($folderPath);
 
     if (!file_exists($localPath)) {
@@ -69,10 +71,10 @@ try {
                 new RecursiveDirectoryIterator($tempDir),
                 RecursiveIteratorIterator::LEAVES_ONLY
             );
-            
+
             foreach ($files as $name => $file) {
                 if (!$file->isDir()) {
-                    $filePath     = $file->getRealPath();
+                    $filePath = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($tempDir) + 1);
 
                     $zip->addFile($filePath, $relativePath);
@@ -85,8 +87,10 @@ try {
 
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
+        $zipUrl = safeUrl($zipFileName);
         header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-        readfile(safeUrl($zipFileName)); // Utilizar safeUrl para generar la URL segura
+        readfile($zipUrl); // Utilizar safeUrl para generar la URL segura
+
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
         removeDir($tempDir);
@@ -101,7 +105,8 @@ try {
 }
 
 // Función para eliminar una carpeta y su contenido recursivamente
-function removeDir($dir) {
+function removeDir($dir)
+{
     if (is_dir($dir)) {
         $objects = scandir($dir);
         foreach ($objects as $object) {
