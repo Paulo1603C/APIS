@@ -1,9 +1,0 @@
-anyDesk
-
-697080423
-
-pass: Jarita.10
-
-server: 
-user ->172.21.123.13
-pass -> Ambato23#
