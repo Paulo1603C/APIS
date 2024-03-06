@@ -8,7 +8,17 @@ require_once('Servidor.php');
 require_once('vendor/autoload.php');
 use phpseclib3\Net\SFTP;
 
-function downloadFolder($sftp, $folderPath, $localPath, $zip) {
+function safeUrl($url) {
+    // Verificar si la URL ya tiene el protocolo HTTPS
+    if (strpos($url, 'https://') === 0) {
+        return $url; // La URL ya es segura, retornarla sin cambios
+    } else {
+        // La URL no tiene HTTPS, reemplazar HTTP por HTTPS
+        return str_replace('http://', 'https://', $url);
+    }
+}
+
+function downloadFolder($sftp, $folderPath, $localPath) {
     $files = $sftp->nlist($folderPath);
 
     if (!file_exists($localPath)) {
@@ -17,49 +27,93 @@ function downloadFolder($sftp, $folderPath, $localPath, $zip) {
 
     foreach ($files as $file) {
         if ($file != '.' && $file != '..') {
-            if ($sftp->is_dir($folderPath . '/' . $file)) {
-                downloadFolder($sftp, $folderPath . '/' . $file, $localPath . '/' . $file, $zip);
+            $remoteFilePath = $folderPath . '/' . $file;
+            $localFilePath = $localPath . '/' . $file;
+            if ($sftp->is_dir($remoteFilePath)) {
+                // Descargar carpetas recursivamente, incluso si están vacías
+                downloadFolder($sftp, $remoteFilePath, $localFilePath);
             } else {
-                $remoteFilePath = $folderPath . '/' . $file;
-                $localFilePath = $localPath . '/' . $file;
+                // Si es un archivo, descargarlo
                 $sftp->get($remoteFilePath, $localFilePath);
-                $zip->addFile($localFilePath, substr($localFilePath, strlen($localPath) + 1));
             }
         }
     }
+
+    // Si no hay archivos ni carpetas en la carpeta remota, creamos una carpeta vacía en la carpeta local
+    if (empty($files)) {
+        mkdir($localPath, 0777, true);
+    }
 }
 
+
 try {
-    $ruta=$_POST['rutaRemota'];
-    $rutaremota = '/UTA/FISEI/'.$ruta;
+    $ruta = $_POST['rutaRemota'];
+    $rutaremota = '/UTA/FISEI/' . $ruta;
 
     $sftp = new SFTP($servidor, $puerto);
     if (!$sftp->login($user, $pass)) {
         throw new Exception('No se pudo autenticar en el servidor SFTP');
     } else {
-        // Crear archivo ZIP
-        $zip = new ZipArchive();
+        // Crear una carpeta temporal para almacenar los archivos descargados
+        $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        mkdir($tempDir);
+
+        // Descargar la carpeta y sus archivos
+        downloadFolder($sftp, $rutaremota, $tempDir);
+
+        // Comprimir la carpeta descargada en un archivo ZIP
         $zipFileName = basename($rutaremota) . '.zip';
+        $zip = new ZipArchive();
         if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            downloadFolder($sftp, $rutaremota, basename($rutaremota), $zip);
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($tempDir),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+            
+            foreach ($files as $name => $file) {
+                if (!$file->isDir()) {
+                    $filePath     = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($tempDir) + 1);
+
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
             $zip->close();
-
-            // Descargar el archivo ZIP
-            header('Content-Type: application/zip');
-            header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-            readfile($zipFileName);
-
-            // Eliminar el archivo ZIP después de la descarga
-            unlink($zipFileName);
         } else {
             throw new Exception('No se pudo crear el archivo ZIP');
         }
+
+        // Descargar el archivo ZIP
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
+        readfile(safeUrl($zipFileName)); // Utilizar safeUrl para generar la URL segura
+
+        // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
+        removeDir($tempDir);
+        unlink($zipFileName);
     }
 } catch (\Throwable $th) {
     echo json_encode(['Error' => true, 'message' => 'Error: ' . $th->getMessage()]);
 } finally {
     if (isset($sftp)) {
         $sftp->disconnect();
+    }
+}
+
+// Función para eliminar una carpeta y su contenido recursivamente
+function removeDir($dir) {
+    if (is_dir($dir)) {
+        $objects = scandir($dir);
+        foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {
+                if (is_dir($dir . "/" . $object)) {
+                    removeDir($dir . "/" . $object);
+                } else {
+                    unlink($dir . "/" . $object);
+                }
+            }
+        }
+        rmdir($dir);
     }
 }
 ?>
