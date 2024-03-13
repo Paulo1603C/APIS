@@ -65,7 +65,7 @@ try {
         } else {
             throw new Exception('No se pudo crear el archivo ZIP');
         }
-
+        echo $zipFileName ;
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
