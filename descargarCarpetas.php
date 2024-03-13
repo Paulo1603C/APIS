@@ -68,7 +68,7 @@ try {
         echo $zipFileName ;
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
+        header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
         readfile($zipFileName);
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
