@@ -29,8 +29,9 @@ function downloadFolder($sftp, $folderPath, $localPath) {
 }
 
 try {
-    $ruta = $_POST['rutaRemota'];
-    $rutaremota = '/UTA/FISEI/' . $ruta;
+    /*$ruta = $_POST['rutaRemota'];
+    $rutaremota = '/UTA/FISEI/' . $ruta;*/
+    $rutaremota = '/UTA/FISEI/CARRERAS';
 
     $sftp = new SFTP($servidor, $puerto);
     if (!$sftp->login($user, $pass)) {
