@@ -38,7 +38,8 @@ try {
         throw new Exception('No se pudo autenticar en el servidor SFTP');
     } else {
         // Crear una carpeta temporal para almacenar los archivos descargados
-        $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        //$tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        $tempDir = '/home/acceso/temp/' . uniqid('sftp_download_');
         echo $tempDir;
         echo sys_get_temp_dir();
         mkdir($tempDir);
