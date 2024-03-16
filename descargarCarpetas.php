@@ -12,7 +12,7 @@ function downloadFolder($sftp, $folderPath, $localPath) {
     $files = $sftp->nlist($folderPath);
 
     if (!file_exists($localPath)) {
-        mkdir($localPath, 0777, true);
+        mkdir($localPath, 1777, true);
     }
 
     foreach ($files as $file) {
