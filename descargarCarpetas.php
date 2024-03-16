@@ -39,6 +39,7 @@ try {
     } else {
         // Crear una carpeta temporal para almacenar los archivos descargados
         $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        echo sys_get_temp_dir();
         mkdir($tempDir);
 
         // Descargar la carpeta y sus archivos
@@ -73,7 +74,7 @@ try {
         readfile($zipFileName);
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
-        removeDir($tempDir);
+        //removeDir($tempDir);
         unlink($zipFileName);
     }
 } catch (\Throwable $th) {
