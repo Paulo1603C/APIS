@@ -19,7 +19,9 @@ function downloadFolder($sftp, $folderPath, $localPath) {
     foreach ($files as $file) {
         if ($file != '.' && $file != '..') {
             $remoteFilePath = $folderPath . '/' . $file;
+            echo $remoteFilePath;
             $localFilePath = $localPath . '/' . $file;
+            echo $localFilePath;
             if ($sftp->is_dir($remoteFilePath)) {
                 downloadFolder($sftp, $remoteFilePath, $localFilePath);
             } else {
