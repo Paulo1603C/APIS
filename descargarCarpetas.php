@@ -10,6 +10,7 @@ use phpseclib3\Net\SFTP;
 
 function downloadFolder($sftp, $folderPath, $localPath) {
     $files = $sftp->nlist($folderPath);
+    print_r($files);
 
     if (!file_exists($localPath)) {
         mkdir($localPath, 1777, true);
