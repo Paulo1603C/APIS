@@ -19,9 +19,9 @@ function downloadFolder($sftp, $folderPath, $localPath) {
     foreach ($files as $file) {
         if ($file != '.' && $file != '..') {
             $remoteFilePath = $folderPath . '/' . $file;
-            echo $remoteFilePath;
+            //echo $remoteFilePath;
             $localFilePath = $localPath . '/' . $file;
-            echo $localFilePath;
+            //echo $localFilePath;
             if ($sftp->is_dir($remoteFilePath)) {
                 downloadFolder($sftp, $remoteFilePath, $localFilePath);
             } else {
@@ -33,9 +33,9 @@ function downloadFolder($sftp, $folderPath, $localPath) {
 }
 
 try {
-    /*$ruta = $_POST['rutaRemota'];
-    $rutaremota = '/UTA/FISEI/' . $ruta;*/
-    $rutaremota = '/UTA/FISEI/CARRERAS';
+    $ruta = $_POST['rutaRemota'];
+    $rutaremota = '/UTA/FISEI/' . $ruta;
+    //$rutaremota = '/UTA/FISEI/CARRERAS';
 
     $sftp = new SFTP($servidor, $puerto);
     if (!$sftp->login($user, $pass)) {
