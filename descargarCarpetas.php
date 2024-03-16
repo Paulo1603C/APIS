@@ -24,6 +24,7 @@ function downloadFolder($sftp, $folderPath, $localPath) {
                 downloadFolder($sftp, $remoteFilePath, $localFilePath);
             } else {
                 $sftp->get($remoteFilePath, $localFilePath);
+                echo $sftp;
             }
         }
     }
