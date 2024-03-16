@@ -12,7 +12,7 @@ function downloadFolder($sftp, $folderPath, $localPath) {
     $files = $sftp->nlist($folderPath);
 
     if (!file_exists($localPath)) {
-        mkdir($localPath, 0777, true);
+        mkdir($localPath, 1777, true);
     }
 
     foreach ($files as $file) {
@@ -29,6 +29,8 @@ function downloadFolder($sftp, $folderPath, $localPath) {
 }
 
 try {
+    /*$ruta = $_POST['rutaRemota'];
+    $rutaremota = '/UTA/FISEI/' . $ruta;*/
     $rutaremota = '/UTA/FISEI/CARRERAS';
 
     $sftp = new SFTP($servidor, $puerto);
@@ -36,7 +38,9 @@ try {
         throw new Exception('No se pudo autenticar en el servidor SFTP');
     } else {
         // Crear una carpeta temporal para almacenar los archivos descargados
-        $tempDir = 'C:/Temp/' . uniqid('sftp_download_');
+        $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        echo $tempDir;
+        echo sys_get_temp_dir();
         mkdir($tempDir);
 
         // Descargar la carpeta y sus archivos
@@ -64,14 +68,14 @@ try {
         } else {
             throw new Exception('No se pudo crear el archivo ZIP');
         }
-
+        echo $zipFileName ;
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' .$zipFileName . '"');
         readfile($zipFileName);
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
-        removeDir($tempDir);
+        //removeDir($tempDir);
         unlink($zipFileName);
     }
 } catch (\Throwable $th) {
