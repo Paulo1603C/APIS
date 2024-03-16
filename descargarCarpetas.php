@@ -29,8 +29,6 @@ function downloadFolder($sftp, $folderPath, $localPath) {
 }
 
 try {
-    /*$ruta = $_POST['rutaRemota'];
-    $rutaremota = '/UTA/FISEI/' . $ruta;*/
     $rutaremota = '/UTA/FISEI/CARRERAS';
 
     $sftp = new SFTP($servidor, $puerto);
@@ -39,8 +37,9 @@ try {
     } else {
         // Crear una carpeta temporal para almacenar los archivos descargados
         $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
-        echo sys_get_temp_dir();
-        mkdir($tempDir);
+        if (!mkdir($tempDir) && !is_dir($tempDir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
+        }
 
         // Descargar la carpeta y sus archivos
         downloadFolder($sftp, $rutaremota, $tempDir);
@@ -67,14 +66,14 @@ try {
         } else {
             throw new Exception('No se pudo crear el archivo ZIP');
         }
-        echo $zipFileName ;
+
         // Descargar el archivo ZIP
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' .$zipFileName . '"');
         readfile($zipFileName);
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
-        //removeDir($tempDir);
+        removeDir($tempDir);
         unlink($zipFileName);
     }
 } catch (\Throwable $th) {
