@@ -43,7 +43,7 @@ try {
     } else {
         echo "Inicio de sesión exitoso en el servidor SFTP" . PHP_EOL;
         
-        $tempDir = sys_get_temp_dir() . uniqid('sftp_download_');
+        $tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('sftp_download_');
         echo "Directorio temporal: " . $tempDir . PHP_EOL;
         mkdir($tempDir, 0777, true);
         var_dump(file_exists($tempDir)). PHP_EOL;
