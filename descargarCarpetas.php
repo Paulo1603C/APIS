@@ -4,11 +4,12 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
-require_once('Servidor.php');
-require_once('vendor/autoload.php');
+require_once ('Servidor.php');
+require_once ('vendor/autoload.php');
 use phpseclib3\Net\SFTP;
 
-function downloadFolder($sftp, $folderPath, $localPath) {
+function downloadFolder($sftp, $folderPath, $localPath)
+{
     $files = $sftp->nlist($folderPath);
     echo "Archivos en la carpeta remota: " . PHP_EOL;
     print_r($files);
@@ -42,18 +43,21 @@ try {
         throw new Exception('No se pudo autenticar en el servidor SFTP');
     } else {
         echo "Inicio de sesión exitoso en el servidor SFTP" . PHP_EOL;
-        
-        $tempDir = sys_get_temp_dir() . uniqid('sftp_download_');
-        echo "Directorio temporal: " . $tempDir . PHP_EOL;
-        mkdir($tempDir, 0777, true);
 
-        if (!file_exists($tempDir)) {
-            throw new Exception('No se pudo crear el directorio temporal');
-        }
-        
+        // Crear una carpeta temporal para almacenar los archivos descargados
+        $tempDir = sys_get_temp_dir() . uniqid('sftp_download_');
+        //$tempDir = '/home/acceso/temp/' . uniqid('sftp_download_');
+        echo "El script se está ejecutando bajo el usuario: " . get_current_user() . PHP_EOL;
+        echo $tempDir . PHP_EOL;
+        echo sys_get_temp_dir() . PHP_EOL;
+        mkdir($tempDir, 0777, true);
+        chmod($tempDir, 0777);
+
+        var_dump(file_exists($tempDir));
+
         echo "Inicio de descarga de archivos..." . PHP_EOL;
         downloadFolder($sftp, $rutaremota, $tempDir);
-        
+
         // Comprimir la carpeta descargada en un archivo ZIP
         $zipFileName = basename($rutaremota) . '.zip';
         $zip = new ZipArchive();
@@ -67,7 +71,7 @@ try {
             foreach ($files as $name => $file) {
                 echo "Agregando archivo al ZIP: " . $file . PHP_EOL;
                 if (!$file->isDir()) {
-                    $filePath     = $file->getRealPath();
+                    $filePath = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($tempDir) + 1);
 
                     $zip->addFile($filePath, $relativePath);
@@ -79,7 +83,7 @@ try {
 
             // Descargar el archivo ZIP
             header('Content-Type: application/zip');
-            header('Content-Disposition: attachment; filename="' .$zipFileName . '"');
+            header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
             readfile($zipFileName);
 
             // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
@@ -98,7 +102,8 @@ try {
 }
 
 // Función para eliminar una carpeta y su contenido recursivamente
-function removeDir($dir) {
+function removeDir($dir)
+{
     if (is_dir($dir)) {
         $objects = scandir($dir);
         foreach ($objects as $object) {
