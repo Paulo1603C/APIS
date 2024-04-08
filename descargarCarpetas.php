@@ -42,7 +42,7 @@ try {
         throw new Exception('No se pudo autenticar en el servidor SFTP');
     } else {
         // Crear una carpeta temporal para almacenar los archivos descargados
-        $tempDir = sys_get_temp_dir() . '/' . uniqid('sftp_download_');
+        $tempDir = sys_get_temp_dir() . '/sftp_download';
         //$tempDir = '/home/acceso/temp/' . uniqid('sftp_download_');
         echo $tempDir;
         echo sys_get_temp_dir();
@@ -82,7 +82,7 @@ try {
         readfile($zipFileName);
 
         // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
-        //removeDir($tempDir);
+        removeDir($tempDir);
         unlink($zipFileName);
     }
 } catch (\Throwable $th) {
