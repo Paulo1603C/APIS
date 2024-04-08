@@ -46,7 +46,7 @@ try {
         //$tempDir = '/home/acceso/temp/' . uniqid('sftp_download_');
         echo $tempDir;
         echo sys_get_temp_dir();
-        mkdir($tempDir);
+        mkdir($tempDir, 0777);
 
         var_dump(file_exists($tempDir));
 
