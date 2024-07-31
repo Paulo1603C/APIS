@@ -22,7 +22,7 @@ if ($nomPlantilla != null) {
         } else {
             echo json_encode("No se pudo crear la plantilla");
         }
-        echo $sqlInsertPer->rowCount();
+        //echo $sqlInsertPer->rowCount();
     } catch (\Throwable $th) {
         echo json_encode("Error en al crear la plantilla: " . $e->getMessage());
     }
