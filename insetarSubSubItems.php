@@ -8,7 +8,7 @@
     $idItemPlantillaPer = isset($_POST['idItemPlan']) ? $_POST['idItemPlan'] : null;
 
     if ($nomSubSubItem != null && $idItemPlantillaPer != 0 ) {
-        $sqlInsertPer = "INSERT INTO sub_subitems (NomSubSubItem, Id_item_plantilla_per) VALUES (:nomSubSubItem,:idItemPlanPer)";
+        $sqlInsertPer = "INSERT INTO sub_subItems (NomSubSubItem, Id_item_plantilla_per) VALUES (:nomSubSubItem,:idItemPlanPer)";
         //echo $sqlInsertPer;
 
         $sqlInsertPer = $connect->prepare($sqlInsertPer);

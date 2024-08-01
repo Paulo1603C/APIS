@@ -10,7 +10,7 @@
     $listSubItems = array();
 
     if( $idItemPlantillaPer != 0 ){
-        $select = "SELECT * FROM sub_subitems WHERE Id_item_plantilla_per = :idItemPlan";
+        $select = "SELECT * FROM sub_subItems WHERE Id_item_plantilla_per = :idItemPlan";
         $select = $connect->prepare($select);
         $select->bindParam(':idItemPlan', $idItemPlantillaPer, PDO::PARAM_INT);
 
