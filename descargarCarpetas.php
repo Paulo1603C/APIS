@@ -46,7 +46,6 @@ try {
         $tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('sftp_download_');
         echo "Directorio temporal: " . $tempDir . PHP_EOL;
         mkdir($tempDir, 0777, true);
-        var_dump(file_exists($tempDir)). PHP_EOL;
 
         if (!file_exists($tempDir)) {
             throw new Exception('No se pudo crear el directorio temporal');
@@ -56,7 +55,7 @@ try {
         downloadFolder($sftp, $rutaremota, $tempDir);
         
         // Comprimir la carpeta descargada en un archivo ZIP
-        $zipFileName = basename($rutaremota) . '.zip';
+        $zipFileName = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($rutaremota) . '.zip';
         $zip = new ZipArchive();
         if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             echo "Comprimiendo archivos..." . PHP_EOL;
@@ -66,11 +65,9 @@ try {
             );
 
             foreach ($files as $name => $file) {
-                echo "Agregando archivo al ZIP: " . $file . PHP_EOL;
                 if (!$file->isDir()) {
                     $filePath     = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($tempDir) + 1);
-
                     $zip->addFile($filePath, $relativePath);
                 }
             }
@@ -79,8 +76,9 @@ try {
             echo "Archivo ZIP creado: " . $zipFileName . PHP_EOL;
 
             // Descargar el archivo ZIP
+            ob_clean(); // Limpia el búfer de salida
             header('Content-Type: application/zip');
-            header('Content-Disposition: attachment; filename="' .$zipFileName . '"');
+            header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
             readfile($zipFileName);
 
             // Eliminar la carpeta temporal y el archivo ZIP después de la descarga
