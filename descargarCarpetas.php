@@ -31,6 +31,12 @@ function downloadFolder($sftp, $folderPath, $localPath) {
             }
         }
     }
+
+    // Crear la carpeta local si está vacía (sin archivos y sin carpetas)
+    if (empty(array_diff($files, array('.', '..')))) {
+        echo "Creando carpeta vacía: " . $localPath . PHP_EOL;
+        mkdir($localPath, 0777, true);
+    }
 }
 
 try {
@@ -69,6 +75,10 @@ try {
                     $filePath     = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($tempDir) + 1);
                     $zip->addFile($filePath, $relativePath);
+                } else {
+                    // Agregar directorios vacíos al archivo ZIP
+                    $relativePath = substr($file->getRealPath(), strlen($tempDir) + 1) . '/';
+                    $zip->addEmptyDir($relativePath);
                 }
             }
 
