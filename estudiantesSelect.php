@@ -11,14 +11,14 @@ $IdUser = isset($_POST['IdUser']) ? $_POST['IdUser'] : null;
 
 if ($IdCar != null || $IdUser != null) {
     $list = array();
-    $sqlSelect = "SELECT e.IdEst, e.NomEst, e.ApeEst, e.CedEst, e.Fecha, c.IdCar, c.NomCar, u.NomUser, e.Nom_Modificador, e.IdPlanPer
-                FROM estudiantes as e
-                JOIN carreras as c ON e.IdCarPer = c.IdCar
-                JOIN carreras_secretarias as cs ON c.IdCar = cs.IdCarPer
-                JOIN usuarios as u ON cs.IdUserPer = u.IdUser
-                WHERE c.IdCar = :idCar
-                AND u.IdUser = :idUser
-                ORDER BY e.NomEst";
+    $sqlSelect = "SELECT DISTINCT e.IdEst, e.NomEst, e.ApeEst, e.CedEst, e.Fecha, c.IdCar, c.NomCar, u.NomUser, e.Nom_Modificador, e.IdPlanPer
+              FROM estudiantes as e
+              JOIN carreras as c ON e.IdCarPer = c.IdCar
+              JOIN carreras_secretarias as cs ON c.IdCar = cs.IdCarPer
+              JOIN usuarios as u ON cs.IdUserPer = u.IdUser
+              WHERE c.IdCar = :idCar
+              AND u.IdUser = :idUser
+              ORDER BY e.NomEst";
     $sqlSelect = $connect->prepare($sqlSelect);
     $sqlSelect->bindParam(':idCar', $IdCar, PDO::PARAM_INT);
     $sqlSelect->bindParam(':idUser', $IdUser, PDO::PARAM_INT);
